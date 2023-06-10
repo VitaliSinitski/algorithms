@@ -1,0 +1,174 @@
+## Процесс реализации
+
+#### 1. Создание массива альпинистов:
+```
+char[] alpinists = {'A', 'B', 'C', 'D', 'E'};
+```
+
+#### 2. Вызов метода `generateCombinations` с массивом альпинистов
+        и размером команды (`teamSize = 3`):
+```
+List<String> combinations = generateCombinations(alpinists, 3);
+```
+
+#### 3. Вход в метод `generateCombinations`:
+```
+public static List<String> generateCombinations(char[] alpinists, int teamSize) {
+    if (teamSize == 0) {
+        return new ArrayList<>(); // Возвращаем пустой список, если teamSize = 0
+    }
+
+    if (teamSize == 1) {
+        List<String> combinations = new ArrayList<>();
+        for (char alpinist : alpinists) {
+            combinations.add(String.valueOf(alpinist));
+        }
+        return combinations;
+    }
+
+    // ...
+}
+```
+
+#### 4. Проверка базового случая, когда `teamSize = 1`:
+```
+if (teamSize == 1) {
+    List<String> combinations = new ArrayList<>();
+    for (char alpinist : alpinists) {
+        combinations.add(String.valueOf(alpinist));
+    }
+    return combinations;
+}
+```
+
+- Создается новый список `combinations`, который будет содержать комбинации альпинистов.
+- Для каждого альпиниста в массиве `alpinists` создается отдельная комбинация
+        и добавляется в список `combinations`.
+
+#### 5. Если `teamSize` не равно 1, выполняется следующий код:
+```
+List<String> combinations = new ArrayList<>();
+for (int i = 0; i <= alpinists.length - teamSize; i++) {
+    char currentAlpinist = alpinists[i];
+    char[] remainingAlpinists = new char[alpinists.length - i - 1];
+    System.arraycopy(alpinists, i + 1, remainingAlpinists, 0, alpinists.length - i - 1);
+
+    List<String> subCombinations = generateCombinations(remainingAlpinists, teamSize - 1);
+    for (String subCombination : subCombinations) {
+        combinations.add(currentAlpinist + subCombination);
+    }
+}
+return combinations;
+```
+
+- Создается новый список `combinations`, который будет содержать комбинации альпинистов.
+- Выполняется цикл `for`, перебирающий индексы альпинистов
+        от 0 до `alpinists.length - teamSize`.
+    Это нужно для того, чтобы каждый альпинист мог быть начальным в комбинации,
+        и остальные альпинисты использовались для создания подкомбинаций.
+- В каждой итерации цикла выбирается текущий альпинист (`currentAlpinist`) по индексу `i`.
+- Создается новый массив `remainingAlpinists`, содержащий оставшихся альпинистов
+        после текущего альпиниста.
+- Рекурсивно вызывается метод `generateCombinations` для массива `remainingAlpinists`
+        и команды размера на 1 меньше (`teamSize - 1`).
+- Полученные подкомбинации (`subCombinations`) объединяются с текущим альпинистом
+        (`currentAlpinist`) и добавляются в список `combinations`.
+- После завершения цикла возвращается список `combinations`.
+
+#### 6. Результаты выводятся на консоль в основном методе `main`:
+```
+for (String combination : combinations) {
+    System.out.println(combination);
+}
+```
+
+Таким образом, поэтапно происходит формирование всех комбинаций альпинистов
+    для заданной команды размером `teamSize`. Вначале обрабатываются базовые случаи
+    для `teamSize = 0` и `teamSize = 1`, а затем с помощью рекурсии происходит
+    построение комбинаций из остальных альпинистов.
+    Каждая комбинация формируется путем объединения текущего альпиниста
+    с подкомбинациями остальных альпинистов.
+
+############################################################################
+
+### Поэтапный процесс решения
+
+1. Итерация 1:
+    - `currentAlpinist = 'A'`
+    - `remainingAlpinists = {'B', 'C', 'D', 'E'}`
+    - Рекурсивный вызов `generateCombinations(remainingAlpinists, 2)`
+
+    - Итерация 1.1:
+        - `currentAlpinist = 'B'`
+        - `remainingAlpinists = {'C', 'D', 'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинаций `{'C', 'D', 'E'}`
+        - Добавление префикса `'B'` к каждой комбинации: `{'BC', 'BD', 'BE'}`
+
+    - Итерация 1.2:
+        - `currentAlpinist = 'C'`
+        - `remainingAlpinists = {'D', 'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинаций `{'D', 'E'}`
+        - Добавление префикса `'C'` к каждой комбинации: `{'CD', 'CE'}`
+
+    - Итерация 1.3:
+        - `currentAlpinist = 'D'`
+        - `remainingAlpinists = {'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинации `{'E'}`
+        - Добавление префикса `'D'` к комбинации: `{'DE'}`
+    - Комбинации для `teamSize = 2` с префиксом `'A'`:
+            `{'ABC', 'ABD', 'ABE', 'ACD', 'ACE', 'ADE'}`
+
+2. Итерация 2:
+    - `currentAlpinist = 'B'`
+    - `remainingAlpinists = {'C', 'D', 'E'}`
+    - Рекурсивный вызов `generateCombinations(remainingAlpinists, 2)`
+
+    - Итерация 2.1:
+        - `currentAlpinist = 'C'`
+        - `remainingAlpinists = {'D', 'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинаций `{'D', 'E'}`
+        - Добавление префикса `'C'` к каждой комбинации: `{'CD', 'CE'}`
+
+    - Итерация 2.2:
+        - `currentAlpinist = 'D'`
+        - `remainingAlpinists = {'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинации `{'E'}`
+        - Добавление префикса `'D'` к комбинации: `{'DE'}`
+    - Комбинации для `teamSize = 2` с префиксом `'B'`: `{'BCD', 'BCE', 'BDE'}`
+
+3. Итерация 3:
+    - `currentAlpinist = 'C'`
+    - `remainingAlpinists = {'D', 'E'}`
+    - Рекурсивный вызов `generateCombinations(remainingAlpinists, 2)`
+
+    - Итерация 3.1:
+        - `currentAlpinist = 'D'`
+        - `remainingAlpinists = {'E'}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат комбинации `{'E'}`
+        - Добавление префикса `'D'` к комбинации: `{'DE'}`
+    - Комбинации для `teamSize = 2` с префиксом `'C'`: `{'CDE'}`
+
+4. Итерация 4:
+    - `currentAlpinist = 'D'`
+    - `remainingAlpinists = {'E'}`
+    - Рекурсивный вызов `generateCombinations(remainingAlpinists, 2)`
+    - Итерация 4.1:
+        - `currentAlpinist = 'E'`
+        - `remainingAlpinists = {}`
+        - Рекурсивный вызов `generateCombinations(remainingAlpinists, 1)`
+        - Возврат пустого списка комбинаций (так как `teamSize = 1`)
+    - Комбинации для `teamSize = 2` с префиксом `'D'`: пустой список
+
+5. Все комбинации объединяются в итоговый список комбинаций:
+    `{'ABC', 'ABD', 'ABE', 'ACD', 'ACE', 'ADE', 'BCD', 'BCE', 'BDE', 'CDE'}`
+
+Таким образом, пошагово обновленный код формирует все возможные комбинации альпинистов
+    размером 3 из массива `'A', 'B', 'C', 'D', 'E'`.
+    Он использует рекурсивный подход, разбивая задачу на более мелкие подзадачи
+    и объединяя их результаты для получения всех комбинаций.

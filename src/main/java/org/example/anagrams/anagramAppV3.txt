@@ -1,0 +1,161 @@
+
+    public static void generateAnagrams(String word) {
+        generateAnagramsHelper("", word);
+    }
+
+    public static void generateAnagramsHelper(String prefix, String remaining) {
+        int length = remaining.length();
+
+        if (length == 0) {
+
+        } else {
+            for (int i = 0; i < length; i++) {
+                String newPrefix = prefix + remaining.charAt(i);
+                String newRemaining = remaining.substring(0, i)
+                                      + remaining.substring(i + 1);
+                generateAnagramsHelper(newPrefix, newRemaining);
+            }
+        }
+    }
+
+
+1. public static void generateAnagramsHelper(String prefix, String remaining)
+Это объявление метода generateAnagramsHelper с двумя параметрами prefix и remaining.
+Этот метод используется для генерации всех анаграмм слова и является рекурсивным.
+
+2. int length = remaining.length();
+Создается переменная length, которая содержит длину оставшейся части слова remaining.
+
+3. if (length == 0) { anagrams.add(prefix); } else { ... }
+Это условное выражение проверяет, остались ли еще символы для генерации анаграммы.
+Если длина remaining равна 0, значит, все символы были использованы, и текущее prefix является полной анаграммой.
+В этом случае анаграмма добавляется в список anagrams с помощью метода anagrams.add(prefix).
+
+4. for (int i = 0; i < length; i++) { ... }
+Это цикл, который перебирает символы в оставшейся части слова remaining.
+
+5. String newPrefix = prefix + remaining.charAt(i);
+Создается новая строка newPrefix, добавляя символ из remaining к текущему prefix.
+Это формирует новый префикс для генерации следующей анаграммы.
+
+6. String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+Создается новая строка newRemaining, исключая символ, который был добавлен к newPrefix.
+Это обновляет оставшуюся часть слова remaining, из которой нужно генерировать анаграммы.
+
+7. generateAnagramsHelper(newPrefix, newRemaining);
+Рекурсивный вызов метода generateAnagramsHelper с обновленным newPrefix и newRemaining.
+Это позволяет генерировать все возможные анаграммы, добавляя по одному символу из оставшейся части слова remaining на каждом уровне рекурсии.
+
+Этот метод рекурсивно генерирует все анаграммы слова, используя префиксный подход.
+Он начинает с пустого префикса и последовательно добавляет каждый символ из оставшейся части слова,
+обновляя префикс и оставшуюся часть на каждом уровне рекурсии.
+Когда оставшаяся часть становится пустой, полученный префикс является полной анаграммой, которая добавляется в список anagrams.
+Таким образом, метод генерирует все возможные анаграммы слова.
+
+-------------------------------------
+String prefix
+Аргумент prefix в данном контексте является аккумулятором, который накапливает новые значения при формировании анаграмм.
+Чтобы сделать его название более понятным, можно использовать термин "собранное слово" или "накопленное слово".
+Например, вместо prefix можно назвать его accumulatedWord или builtWord.
+Это поможет лучше отразить его роль в процессе генерации анаграмм, где каждый символ добавляется к нему для создания новых комбинаций.
+
+-------------------------------------
+
+Использование remaining.substring(0, i) в строке String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+    позволяет создать новую строку newRemaining, исключив символ с индексом i из исходной строки remaining.
+
+При каждой итерации цикла for, где i принимает значения от 0 до length - 1, мы формируем новую строку newRemaining.
+Первая часть remaining.substring(0, i) содержит символы с индексами от 0 до i-1,
+    а вторая часть remaining.substring(i + 1) содержит символы с индексами от i+1 до конца строки remaining.
+Таким образом, мы исключаем символ с индексом i из строки remaining и объединяем две части в новую строку newRemaining.
+
+Исправленная формула String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1); позволяет создать новую строку newRemaining,
+    исключив символ с индексом i из исходной строки remaining.
+
+------------------------------------
+
+Итерация 1:
+
+- prefix: "", remaining: "cat", length: 3
+- Так как length не равно 0, выполняется цикл for.
+- Внутри цикла формируется новый префикс newPrefix = prefix + remaining.charAt(i),
+    где i равно 0. Получаем newPrefix = "" + 'c', то есть newPrefix = "c".
+- Обновляем оставшуюся часть слова newRemaining с помощью remaining.substring(0, i)
+        + remaining.substring(i + 1).
+    Получаем newRemaining = remaining.substring(0, 0) + remaining.substring(0 + 1),
+        то есть newRemaining = "" + "at", то есть newRemaining = "at".
+- Рекурсивно вызываем generateAnagramsHelper(newPrefix, newRemaining),
+    передавая "c" в качестве нового префикса и "at" в качестве оставшейся части слова.
+
+
+Итерация 2:
+
+- prefix: "c", remaining: "at", length: 2
+- Так как length не равно 0, выполняется цикл for.
+- Внутри цикла формируется новый префикс newPrefix = prefix + remaining.charAt(i),
+        где i равно 0.
+    Получаем newPrefix = "c" + 'a', то есть newPrefix = "ca".
+- Обновляем оставшуюся часть слова newRemaining с помощью remaining.substring(0, i)
+        + remaining.substring(i + 1).
+    Получаем newRemaining = remaining.substring(0, 0) + remaining.substring(0 + 1),
+        то есть newRemaining = "" + "t", то есть newRemaining = "t".
+- Рекурсивно вызываем generateAnagramsHelper(newPrefix, newRemaining),
+    передавая "ca" в качестве нового префикса и "t" в качестве оставшейся части слова.
+
+
+Итерация 3:
+
+- prefix: "ca", remaining: "t", length: 1
+- Так как length не равно 0, выполняется цикл for.
+- Внутри цикла формируется новый префикс newPrefix = prefix + remaining.charAt(i),
+        где i равно 0.
+    Получаем newPrefix = "ca" + 't', то есть newPrefix = "cat".
+- Обновляем оставшуюся часть слова newRemaining с помощью remaining.substring(0, i)
+        + remaining.substring(i + 1).
+    Получаем newRemaining = remaining.substring(0, 0) + remaining.substring(0 + 1),
+        то есть newRemaining = "" + "", то есть newRemaining = "".
+- Рекурсивно вызываем generateAnagramsHelper(newPrefix, newRemaining), передавая "cat" в качестве нового префикса и "" в качестве оставшейся части слова.
+
+
+Итерация 4:
+
+- prefix: "cat", remaining: "", length: 0
+- Так как length равно 0, выполняется блок if.
+- Префикс "cat" добавляется в список anagrams.
+- После завершения всех итераций цикла и рекурсии, список anagrams будет содержать
+    все возможные анаграммы слова "cat": "cat", "cta", "act", "atc", "tca", "tac".
+
+----------------------------------------
+
+Получается, что i всегда равно 0?
+
+При изначальном вызове generateAnagramsHelper, i действительно всегда равно 0 на каждой итерации цикла.
+Это связано с тем, что на каждом уровне рекурсии мы обрабатываем оставшуюся часть слова remaining, начиная с первого символа.
+
+Однако, на каждом уровне рекурсии remaining сокращается на один символ, поэтому значение i на каждой итерации меняется,
+и мы рассматриваем все возможные комбинации символов в remaining.
+Таким образом, в итоге все символы в remaining будут рассмотрены на разных позициях префикса.
+
+Для примера, на первом уровне рекурсии мы рассматриваем все комбинации символов в remaining ("cat") на первой позиции префикса,
+на втором уровне - на второй позиции, и на третьем уровне - на третьей позиции. Это позволяет нам получить все возможные перестановки символов и,
+в результате, все анаграммы исходного слова.
+
+-----------------------------------------
+Почем у нас не получается повторяющихся слов?
+
+В данном алгоритме генерации анаграмм используется рекурсия с перебором всех возможных комбинаций символов.
+Один из ключевых моментов, который обеспечивает отсутствие повторяющихся слов, это исключение повторного использования символов из исходного слова.
+
+При каждой итерации цикла внутри функции generateAnagramsHelper, мы создаем новые префиксы и оставшиеся части слова, исключая текущий символ из remaining.
+Это достигается следующим образом:
+
+String newPrefix = prefix + remaining.charAt(i);
+String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+generateAnagramsHelper(newPrefix, newRemaining);
+
+Строка newPrefix формируется путем конкатенации текущего символа из remaining с префиксом prefix.
+Строка newRemaining формируется путем объединения частей remaining, исключая текущий символ.
+
+Таким образом, на каждом уровне рекурсии мы обрабатываем только уникальные символы из исходного слова
+и создаем все возможные комбинации этих символов в различных позициях префикса.
+Это исключает повторение одних и тех же комбинаций символов и, следовательно, повторение анаграмм.
