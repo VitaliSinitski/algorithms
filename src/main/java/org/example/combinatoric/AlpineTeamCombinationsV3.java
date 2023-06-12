@@ -12,11 +12,7 @@ public class AlpineTeamCombinationsV3 {
                 0); // индекс, с которого начинается выбор следующего альпиниста
     }
 
-    public static void generateCombinations
-            (char[] alpinists,
-             int teamSize,
-             StringBuilder combination,
-             int startIndex) {
+    public static void generateCombinations (char[] alpinists, int teamSize, StringBuilder combination, int startIndex) {
         // если размер команды `teamSize` равен 0, значит комбинация уже содержит трех альпинистов
         // поэтому мы выводим комбинацию на экран и возвращаемся из метода
         if (teamSize == 0) {

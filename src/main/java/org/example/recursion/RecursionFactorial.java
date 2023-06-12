@@ -1,4 +1,4 @@
-package org.example;
+package org.example.recursion;
 
 public class RecursionFactorial {
     public static void main(String[] args) {
