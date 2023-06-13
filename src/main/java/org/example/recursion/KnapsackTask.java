@@ -4,7 +4,8 @@ public class KnapsackTask {
     public static void main(String[] args) {
         int[] weights = {11, 8, 7, 6, 5};
         int targetWeight = 20;
-        boolean isPossible = knapsack(weights, targetWeight, weights.length - 1); // currentIndex (первоначально задается последний индекс массива)
+        // currentIndex (первоначально задается последний индекс массива)
+        boolean isPossible = knapsack(weights, targetWeight, weights.length - 1);
         System.out.println("Is it possible to achieve the target weight? " + isPossible);
     }
 
