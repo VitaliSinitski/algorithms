@@ -1,4 +1,4 @@
-package org.example;
+package org.example.simpleSort;
 
 public class SimpleSortTask2 {
     private static int nElems = 100_000;

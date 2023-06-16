@@ -1,4 +1,4 @@
-package org.example;
+package org.example.simpleSort;
 
 public class BubbleSortTask {
     public static void main(String[] args) {
