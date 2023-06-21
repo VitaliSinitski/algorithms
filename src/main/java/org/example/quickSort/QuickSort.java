@@ -1,181 +1,147 @@
 package org.example.quickSort;
 
-import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class QuickSort {
     public static void main(String[] args) {
-        /*
-
-        int [] array = new int[] {64, 42, 73, 41, 32, 53, 16, 24, 57, 42, 74, 55, 36};
-
-        System.out.println(arrayToString(array));
-
-        quickSort(array, 0, array.length - 1);
-        */
-        test1();
-
+        int numElems = 1_000_000_000;
+        int[] numbers = new int[numElems];
+        fillArray(numbers);
+        long before = System.currentTimeMillis();
+        sortArray(numbers);
+        long after = System.currentTimeMillis();
+//        System.out.println("Quick sort with recursion took: " + (after - before) + " ms"); // 800ms (10_000_000) // 8500-9500ms (100_000_000) // 95000ms (1_000_000_000)
+        System.out.println("Quick sort with stack took: " + (after - before) + " ms"); // 700-750ms (10_000_000) // 7500-8500ms (100_000_000) // OutOfMemoryError: Java heap space (1_000_000_000)
     }
 
-    public static void quickSort(int[] arr, int from, int to) {
+    public static void sortArray(int[] array) {
+        quickSortRecursion(array, 0, array.length - 1);
+//        quickSortIterative(array, 0, array.length - 1);
+    }
 
-        if (from < to) {
+    /*
+    Метод quickSort(int[] array, int leftIndex, int rightIndex):
 
-            int divideIndex = partition(arr, from, to);
+    1. Условие: Завершить (или выход из рекурсии) если массив пуст или нечего делить (leftIndex >= rightIndex)
+        - Из массива выбираем некоторый опорный элемент.
+            - Тем самым массив разбивается на две части:
+                - неотсортированные элементы слева от опорного элемента
+                - неотсортированные элементы справа от опорного элемента
+        - Создаем каретки-маркеры, которые будут отслеживать проход по элементам (инициализируются они начальным и конечным индексом в массиве)
+            - каретка для прохода слева-направо до опорного элемента
+            - каретка для прохода справа-налево до опорного элемента
+    2. Условие: алгоритм будет работать пока левая каретка <= правой каретке
+        - Перекладываем все элементы влево или вправо от опорного элемента.
+            - Двигаем левый маркер слева направо, если элемент меньше опорного
+            - Двигаем правый маркер, если элемент больше опорного
+        - Если левый маркер все еще меньше правого, меняем элементы местами
+            - Сдвигаем маркеры, чтобы получить новые границы
+    3. Рекурсивный вызов для сортировки левой и правой частей
+        - Если есть левый подмассив (от начала до правого маркера, прошедшего в середину)
+        - Если есть правый подмассив (от конца до левого маркера, прошедшего в середину)
+    */
+    private static void quickSortRecursion(int[] array, int leftIndex, int rightIndex) {
+        if (array == null || array.length == 0 || leftIndex >= rightIndex) return;
+        int pivot = array[leftIndex + (rightIndex - leftIndex) / 2];
+        int leftMarkerIndex = leftIndex;
+        int rightMarkerIndex = rightIndex;
 
-            quickSort(arr, from, divideIndex - 1);
+        while (leftMarkerIndex <= rightMarkerIndex) {
+            while (array[leftMarkerIndex] < pivot) {
+                leftMarkerIndex++;
+            }
+            while (array[rightMarkerIndex] > pivot) {
+                rightMarkerIndex--;
+            }
+            if (leftMarkerIndex <= rightMarkerIndex) {
+                swap(array, leftMarkerIndex, rightMarkerIndex);
+                leftMarkerIndex++;
+                rightMarkerIndex--;
+            }
+        }
 
-            quickSort(arr, divideIndex, to);
+        if (leftIndex < rightMarkerIndex) {
+            quickSortRecursion(array, leftIndex, rightMarkerIndex);
+        }
+        if (rightIndex > leftMarkerIndex) {
+            quickSortRecursion(array, leftMarkerIndex, rightIndex);
         }
     }
 
-    private static int partition(int[] arr, int from, int to) {
-        int rightIndex = to;
-        int leftIndex = from;
+    // Итеративная реализация алгоритма быстрой сортировки
+    private static void quickSortIterative(int[] array, int leftIndex, int rightIndex) {
+        // Создаем стек для хранения границ подмассивов
+        int[] stack = new int[rightIndex - leftIndex + 1];
 
-        int pivot = arr[from + (to - from) / 2];
-        while (leftIndex <= rightIndex) {
+        // Инициализируем вершину стека
+        int top = -1;
 
-            while (arr[leftIndex] < pivot) {
-                leftIndex++;
+        // Помещаем начальные значения границ в стек
+        stack[++top] = leftIndex;
+        stack[++top] = rightIndex;
+
+        // Пока стек не пуст, продолжаем извлекать границы и сортировать подмассивы
+        while (top >= 0) {
+            // Извлекаем правую и левую границы текущего подмассива
+            rightIndex = stack[top--];
+            leftIndex = stack[top--];
+
+            // Выбираем опорный элемент
+            int pivot = array[leftIndex + (rightIndex - leftIndex) / 2];
+
+            // Разбиваем подмассив на две части и получаем новые границы
+            int partitionIndex = partition(array, leftIndex, rightIndex, pivot);
+
+            // Если есть элементы в левой части подмассива, помещаем границы в стек
+            if (partitionIndex - 1 > leftIndex) {
+                stack[++top] = leftIndex;
+                stack[++top] = partitionIndex - 1;
             }
 
-            while (arr[rightIndex] > pivot) {
-                rightIndex--;
-            }
-
-            if (leftIndex <= rightIndex) {
-                swap(arr, rightIndex, leftIndex);
-                leftIndex++;
-                rightIndex--;
+            // Если есть элементы в правой части подмассива, помещаем границы в стек
+            if (partitionIndex + 1 < rightIndex) {
+                stack[++top] = partitionIndex + 1;
+                stack[++top] = rightIndex;
             }
         }
-        return leftIndex;
     }
 
-    private static void swap(int[] array, int index1, int index2) {
-        int tmp = array[index1];
-        array[index1] = array[index2];
-        array[index2] = tmp;
+    // Разделение подмассива на две части
+    private static int partition(int[] array, int leftIndex, int rightIndex, int pivot) {
+        int leftMarkerIndex = leftIndex;
+        int rightMarkerIndex = rightIndex;
+
+        while (leftMarkerIndex <= rightMarkerIndex) {
+            // Двигаем левый маркер вправо, пока элемент меньше опорного
+            while (array[leftMarkerIndex] < pivot)
+                leftMarkerIndex++;
+
+            // Двигаем правый маркер влево, пока элемент больше опорного
+            while (array[rightMarkerIndex] > pivot)
+                rightMarkerIndex--;
+
+            // Если левый маркер все еще меньше правого, меняем элементы местами
+            if (leftMarkerIndex <= rightMarkerIndex) {
+                swap(array, leftMarkerIndex, rightMarkerIndex);
+                leftMarkerIndex++;
+                rightMarkerIndex--;
+            }
+        }
+
+        // Возвращаем индекс, по которому происходит разделение
+        return leftMarkerIndex;
     }
 
-    private static String arrayToString(int[] array) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
+    private static void swap(int[] array, int ind1, int ind2) {
+        int temp = array[ind1];
+        array[ind1] = array[ind2];
+        array[ind2] = temp;
+    }
+
+    private static void fillArray(int[] array) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < array.length; i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(array[i]);
+            array[i] = random.nextInt(1_000_000_000);
         }
-        sb.append("]");
-        return sb.toString();
-    }
-
-    private static void printSortStep(int[] arr, int from, int to, int partitionIndex) {
-        System.out.print(arrayToString(arr));
-        System.out.print("\npartition at index: " + partitionIndex);
-        System.out.print(", left: " + arrayToString(Arrays.copyOfRange(arr, from, partitionIndex)));
-        System.out.println(", right: " + arrayToString(Arrays.copyOfRange(arr, partitionIndex, to + 1)) + "\n");
-    }
-
-    private static void bubbleSort(int[] arr) {
-        boolean sorted = false;
-        while (!sorted) {
-            sorted = true;
-            for (int i = 1; i < arr.length; i++) {
-                if (arr[i - 1] > arr[i]) {
-                    swap(arr, i - 1, i);
-                    sorted = false;
-                }
-            }
-        }
-    }
-
-    public static int[] mergeSort(int[] array) {
-        int[] tmp;
-        int[] currentSrc = array;
-        int[] currentDest = new int[array.length];
-
-        int size = 1;
-        while (size < array.length) {
-            for (int i = 0; i < array.length; i += 2 * size) {
-                merge(currentSrc, i, currentSrc, i + size, currentDest, i, size);
-            }
-
-            tmp = currentSrc;
-            currentSrc = currentDest;
-            currentDest = tmp;
-
-            size = size * 2;
-        }
-        return currentSrc;
-    }
-
-    private static void merge(int[] src1, int src1Start, int[] src2, int src2Start, int[] dest, int destStart, int size) {
-        int index1 = src1Start;
-        int index2 = src2Start;
-
-        int src1End = Math.min(src1Start + size, src1.length);
-        int src2End = Math.min(src2Start + size, src2.length);
-
-        int iterationCount = src1End - src1Start + src2End - src2Start;
-
-        for (int i = destStart; i < destStart + iterationCount; i++) {
-            if (index1 < src1End && (index2 >= src2End || src1[index1] < src2[index2])) {
-                dest[i] = src1[index1];
-                index1++;
-            } else {
-                dest[i] = src2[index2];
-                index2++;
-            }
-        }
-    }
-
-    private static void test1() {
-        int testLen = 100000000;
-
-        int[] arr1 = new int[testLen];
-        int[] arr2 = new int[testLen];
-
-        System.out.println("\n-----Случайный массив------");
-
-        for (int i = 0; i < testLen; i++) {
-            arr2[i] = arr1[i] = (int) Math.round(Math.random() * 10000);
-        }
-
-        System.out.println("Быстрая сортировка:");
-        measureTime(() -> quickSort(arr1, 0, testLen - 1));
-
-        System.out.println("Сортировка слиянием:");
-        measureTime(() -> mergeSort(arr2));
-    }
-
-    private static void test2() {
-        int testLen = 100000000;
-
-        int[] arr1 = new int[testLen];
-        int[] arr2 = new int[testLen];
-
-        System.out.println("\n-----Отсортированный массив------");
-
-        for (int i = 0; i < testLen; i++) {
-            arr2[i] = arr1[i] = i;
-        }
-
-        System.out.println("Быстрая сортировка:");
-        measureTime(() -> quickSort(arr1, 0, testLen - 1));
-
-        System.out.println("Сортировка пузырьком:");
-        measureTime(() -> mergeSort(arr2));
-
-    }
-
-    private static void measureTime(Runnable task) {
-        long startTime = System.currentTimeMillis();
-        task.run();
-        long elapsed = System.currentTimeMillis() - startTime;
-        System.out.println("Затраченное время: " + elapsed + " ms");
     }
 }
-
-
