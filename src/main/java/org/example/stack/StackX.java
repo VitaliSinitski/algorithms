@@ -2,20 +2,20 @@ package org.example.stack;
 
 public class StackX {
     private int maxSize;    // Размер массива
-    private long[] stackArray;
+    private char[] stackArray;
     private int top;    // Вершина стека
 
     public StackX(int s) {  // Конструктор
         maxSize = s; // Определение размера стека
-        stackArray = new long[maxSize]; // Создание массива
+        stackArray = new char[maxSize]; // Создание массива
         top = -1; // Пока нет ни одного элемента
     }
 
-    public void push(long j) {  // Размещение элемента на вершине стека
+    public void push(char j) {  // Размещение элемента на вершине стека
         stackArray[++top] = j; // Увеличение top, вставка элемента
     }
 
-    public long pop() {         // Извлечение элемента с вершины стека
+    public char pop() {         // Извлечение элемента с вершины стека
         return stackArray[top--]; // Извлечение элемента, уменьшение top
     }
 
