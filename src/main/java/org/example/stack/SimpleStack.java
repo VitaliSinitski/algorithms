@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class SimpleStack<T> implements StackCustom<T> {
     private ArrayList<T> list = new ArrayList<>();
+
     @Override
     public void push(T item) {
         list.add(0, item);
