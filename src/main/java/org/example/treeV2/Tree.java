@@ -3,7 +3,7 @@ package org.example.treeV2;
 import java.util.Stack;
 
 public class Tree {
-    private Node root; // first node of tree
+    private Node root; // first node of treeV1
 
     public Tree() {     // Конструктор
         root = null;    // Пока нет ни одного узла

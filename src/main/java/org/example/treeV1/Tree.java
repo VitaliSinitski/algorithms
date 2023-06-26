@@ -1,4 +1,4 @@
-package org.example.tree;
+package org.example.treeV1;
 
 import lombok.AllArgsConstructor;
 import org.example.queue.SimpleQueue;

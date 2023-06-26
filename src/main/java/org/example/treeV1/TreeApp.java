@@ -1,4 +1,4 @@
-package org.example.tree;
+package org.example.treeV1;
 
 public class TreeApp {
     public static void main(String[] args) {
