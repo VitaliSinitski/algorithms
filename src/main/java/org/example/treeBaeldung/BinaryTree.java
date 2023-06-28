@@ -3,11 +3,27 @@ package org.example.treeBaeldung;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BinaryTree {
 
     Node root;
 
+    // --------------------- fill tree -----------------------
+    public void fillRandomTree(BinaryTree tree) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (int i = 0; i < 10; i++) {
+            tree.add(random.nextInt(10));
+        }
+    }
+
+    public void fillInOrderTreeToTen(BinaryTree tree) {
+        for (int i = 1; i <= 10; i++) {
+            tree.add(i);
+        }
+    }
+
+    // --------------------- add ----------------------
     public void add(int value) {
         root = addRecursive(root, value);
     }
@@ -27,10 +43,12 @@ public class BinaryTree {
         return current;
     }
 
+    // ---------------------- isEmpty ------------------------
     public boolean isEmpty() {
         return root == null;
     }
 
+    // ----------------------- getSize ------------------------
     public int getSize() {
         return getSizeRecursive(root);
     }
@@ -39,6 +57,34 @@ public class BinaryTree {
         return current == null ? 0 : getSizeRecursive(current.left) + 1 + getSizeRecursive(current.right);
     }
 
+    // ------------------------ minimum --------------------------
+    // Возвращает узел с минимальным ключом
+    public Node minimum() {
+        Node current;
+        Node last = null;
+        current = root;     // Обход начинается с корневого узла
+        while (current != null) {   // и продолжается до низа
+            last = current;     // Сохранение узла
+            current = current.left;     // Переход к левому потомку
+        }
+        return last;
+        // минимальное значение пригодится при удалении узла
+    }
+
+    // ------------------------ maximum --------------------------
+    // Возвращает узел с максимальным ключом
+    public Node maximum() {
+        Node current;
+        Node last = null;
+        current = root;     // Обход начинается с корневого узла
+        while (current != null) {   // и продолжается до низа
+            last = current;     // Сохранение узла
+            current = current.right;     // Переход к правому потомку
+        }
+        return last;
+    }
+
+    // ------------------------ contains -------------------------
     public boolean containsNode(int value) {
         return containsNodeRecursive(root, value);
     }
@@ -57,6 +103,7 @@ public class BinaryTree {
                 : containsNodeRecursive(current.right, value);
     }
 
+    // -------------------- delete -----------------------
     public void delete(int value) {
         root = deleteRecursive(root, value);
     }
@@ -110,55 +157,67 @@ public class BinaryTree {
         return root.left == null ? root.value : findSmallestValue(root.left);
     }
 
-    public void traverseInOrder(Node node) {
+    // ------------------- traverse with recursion ----------------------
+    // Поиск в глубину (DFS)
+    // Поиск в глубину представляет собой способ обхода бинарного дерева, который спускается вглубь каждой ветви, прежде чем переходить к следующей
+
+
+    // ------------------- Симметричный обход ---------------------------
+    // Симметричный обход (инфиксный обход) (In-order traversal) - или обход по порядку (слева направо)
+    // сначала посещается левое поддерево, затем текущий узел, а затем правое поддерево
+    // В результате элементы дерева выводятся в отсортированном порядке (для бинарного дерева поиска).
+
+    // Также это подход называется инфиксной обход, который обычно используемой в алгебре.
+    // При обходе дерева в симметричном порядке генерируется правильная инфиксная запись
+
+    // При вызове рекурсивного метода для обхода всего дерева в аргументе передается узел.
+    // В исходном состоянии этим узлом является корень дерева.
+    public void traverseInOrder(Node node) { // вывод в консоль: 3 4 5 6 7 8 9
         if (node != null) {
+            // вызов самого себя для обхода левого поддерева узла
             traverseInOrder(node.left);
+            //  посещение узла (подразумевает выполнение некоторой операции: вывод данных, запись в файл и т. д.)
             visit(node.value);
+            // вызов самого себя для обхода правого поддерева узла
             traverseInOrder(node.right);
+            // Далее метод действует самостоятельно, рекурсивно вызывая самого себя до тех пор, пока не останется узлов для обхода.
         }
     }
 
-    public void traversePreOrder(Node node) {
+    // -------------------- Прямой обход ---------------------------
+    // Прямой обход (Префиксный обход) (Pre-order traversal) - сверху вниз
+    // сначала посещается текущий узел, затем левое поддерево, а затем правое поддерево
+    public void traversePreOrder(Node node) { // вывод в консоль: 6 4 3 5 8 7 9
         if (node != null) {
+            //  посещение узла (подразумевает выполнение некоторой операции: вывод данных, запись в файл и т. д.)
             visit(node.value);
+            // вызов самого себя для обхода левого поддерева узла
             traversePreOrder(node.left);
+            // вызов самого себя для обхода правого поддерева узла
             traversePreOrder(node.right);
         }
     }
 
-    public void traversePostOrder(Node node) {
+    // Обратный обход (Постфиксный обход) (Post-order traversal) - снизу вверх
+    // сначала посещается левое поддерево, затем правое поддерево, а затем текущий узел
+    public void traversePostOrder(Node node) { // вывод в консоль: 3 5 4 7 9 8 6
         if (node != null) {
+            // вызов самого себя для обхода левого поддерева узла
             traversePostOrder(node.left);
+            // вызов самого себя для обхода правого поддерева узла
             traversePostOrder(node.right);
+            //  посещение узла (подразумевает выполнение некоторой операции: вывод данных, запись в файл и т. д.)
             visit(node.value);
         }
     }
 
-    public void traverseLevelOrder() {
-        if (root == null) {
-            return;
-        }
 
-        Queue<Node> nodes = new LinkedList<>();
-        nodes.add(root);
+    // ------------------ traverse without recursion ------------------------
 
-        while (!nodes.isEmpty()) {
-
-            Node node = nodes.remove();
-
-            System.out.print(" " + node.value);
-
-            if (node.left != null) {
-                nodes.add(node.left);
-            }
-
-            if (node.right != null) {
-                nodes.add(node.right);
-            }
-        }
-    }
-
-    public void traverseInOrderWithoutRecursion() {
+    // Поперечный обход (симметричный) (In-order traversal) - или обход по порядку (слева направо)
+    // сначала посещается левое поддерево, затем текущий узел, а затем правое поддерево
+    // В результате элементы дерева выводятся в отсортированном порядке (для бинарного дерева поиска).
+    public void traverseInOrderWithoutRecursion() {  // вывод в консоль: 3 4 5 6 7 8 9
         Stack<Node> stack = new Stack<>();
         Node current = root;
 
@@ -174,7 +233,9 @@ public class BinaryTree {
         }
     }
 
-    public void traversePreOrderWithoutRecursion() {
+    // Прямой обход (Pre-order traversal) - сверху вниз
+    // сначала посещается текущий узел, затем левое поддерево, а затем правое поддерево
+    public void traversePreOrderWithoutRecursion() { // вывод в консоль: 6 4 3 5 8 7 9
         Stack<Node> stack = new Stack<>();
         Node current = root;
         stack.push(root);
@@ -191,7 +252,9 @@ public class BinaryTree {
         }
     }
 
-    public void traversePostOrderWithoutRecursion() {
+    // Обратный обход (Post-order traversal) - снизу вверх
+    // сначала посещается левое поддерево, затем правое поддерево, а затем текущий узел
+    public void traversePostOrderWithoutRecursion() { // вывод в консоль: 3 5 4 7 9 8 6
         Stack<Node> stack = new Stack<>();
         Node prev = root;
         Node current = root;
@@ -217,10 +280,58 @@ public class BinaryTree {
         }
     }
 
+    // ------------------- breadth-first search ----------------------
+    // поиск в ширину (BFS - Breadth-First Search)
+    public void breadthFirstTraversal(Node root) {
+        if (root == null)
+            return;
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(root);      // Добавляем корневой узел в очередь
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();    // Извлекаем узел из очереди
+            System.out.print(current.value + " ");      // Посещение текущего узла
+
+            // Добавляем потомков текущего узла в очередь
+            if (current.left != null)
+                queue.offer(current.left);
+            if (current.right != null)
+                queue.offer(current.right);
+        }
+    }
+
+
+    public void traverseLevelOrder() {
+        if (root == null) {
+            return;
+        }
+
+        Queue<Node> nodes = new LinkedList<>();
+        nodes.add(root);
+
+        while (!nodes.isEmpty()) {
+
+            Node node = nodes.remove();
+
+            System.out.print(" " + node.value);
+
+            if (node.left != null) {
+                nodes.add(node.left);
+            }
+
+            if (node.right != null) {
+                nodes.add(node.right);
+            }
+        }
+    }
+
+    // --------------------- to console ------------------------
     private void visit(int value) {
         System.out.print(" " + value);
     }
 
+    // --------------------- class Node -------------------------
     class Node {
         int value;
         Node left;
