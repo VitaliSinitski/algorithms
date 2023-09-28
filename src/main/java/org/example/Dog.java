@@ -2,12 +2,12 @@ package org.example;
 
 import java.util.Objects;
 
-public class Person implements Comparable<Person> {
+public class Dog implements Comparable<Dog> {
     private String name;
     private int age;
 
     @Override
-    public int compareTo(Person o) {
+    public int compareTo(Dog o) {
         return Integer.compare(this.age, o.age);
     }
 
@@ -31,7 +31,7 @@ public class Person implements Comparable<Person> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
+        Dog person = (Dog) o;
         return age == person.age && Objects.equals(name, person.name);
     }
 
